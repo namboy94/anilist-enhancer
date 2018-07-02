@@ -13,9 +13,13 @@
 
   "content_scripts": [
     {
-      "matches": ["*://anilist.co/anime/*", "*://anilist.co/manga/*", "*://google.com/*"],
+      "matches": ["*://anilist.co/anime/*", "*://anilist.co/manga/*"],
       "js": ["src/anilist-enhancer.js"]
     }
+  ],
+
+  "permissions": [
+    "*://graphql.anilist.co/*"
   ]
 
 }

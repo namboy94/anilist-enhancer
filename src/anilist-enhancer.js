@@ -17,25 +17,43 @@ You should have received a copy of the GNU General Public License
 along with anilist-enhancer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-document.root = null;
-var anilistId = 1;
-var malId = getMalId(anilistId);
-var malUrl = "https://myanimelist.net/anime/" + malId
-console.log(malUrl)
+displayMyanimelistData(getAnilistId(), getAnilistType());
 
-function getMalId(anilistId) {
+/**
+ * Retrieves the anilist ID of the page
+ * @returns {number} The anilist ID
+ */
+function getAnilistId() {
+    const url = window.location.href;
+    return Number(url.split("https://anilist.co/")[1].split("/")[1])
+}
 
-	var query = `
-		query ($id: Int) {
-		  Media (id: $id, type: ANIME) {
-		    idMal
-		  }
-		}
-	`;
-	var variables = {id: anilistId}
+/**
+ * Retrieves the anilist type, either anime or manga
+ * @returns {string} The anilist entry type
+ */
+function getAnilistType() {
+    const url = window.location.href;
+    return url.split("https://anilist.co/")[1].split("/")[0]
+}
 
-	var url = 'https://graphql.anilist.co';
-	var options = {
+/**
+ * Displays myanimelist.net information in the data section
+ * @param anilistId {Number} The anilist ID
+ * @param anilistType {String} The anilist media type
+ */
+function displayMyanimelistData(anilistId, anilistType) {
+
+    const url = 'https://graphql.anilist.co';
+    const query = `
+    query ($id: Int) {
+      Media (id: $id, type: ANIME) {
+        idMal
+      }
+    }
+    `;
+    const variables = {id: anilistId};
+    const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -47,11 +65,42 @@ function getMalId(anilistId) {
         })
     };
 
-	return  fetch(url, options)
-	   .then(function(response) {
-	   		return response.json();
-	   })
-	   .then(function(json) {
-	   		return json["data"]["Media"]["idMal"]
-	   });
+    fetch(url, options)
+        .then(function handleResponse(response) {
+            return response.json().then(function (json) {
+                return response.ok ? json : Promise.reject(json);
+            });
+        })
+        .then(function handleData(data) {
+            if (data["data"] !== null) {
+                const malId = data["data"]["Media"]["idMal"];
+                if (malId !== null) {
+                    displayMalButton(malId)
+                }
+            }
+        })
+        .catch(function handleError(error) {
+            console.error(error);
+        });
+}
+
+
+function displayMalButton(malId) {
+    const malUrl = "https://myanimelist.net/anime/" + malId;
+    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+
+    let a = document.createElement("a");
+    a.href = malUrl;
+
+    let img = document.createElement('img');
+    img.src = malImg;
+    img.width = 50;
+    img.height = 50;
+    img.className = "ranking";
+    img.style.marginBottom = "15px";
+
+    a.appendChild(img);
+
+    const first = document.getElementsByClassName("rankings")[0];
+    document.getElementsByClassName("sidebar")[0].insertBefore(a, first);
 }
