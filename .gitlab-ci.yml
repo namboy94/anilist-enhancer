@@ -1,5 +1,9 @@
 stages:
   - stats
+  - test
+  - build
+  - sign
+  - release
 
 gitstats:
   stage: stats
@@ -10,3 +14,51 @@ gitstats:
   script:
     - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - gitstats-gen
+
+lint:
+  stage: test
+  tags:
+    - python3
+    - npm
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - webext-lint
+
+build_addon:
+  stage: build
+  tags:
+    - python3
+    - npm
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - webext-build
+  artifacts:
+    expire_in: 1 week
+      paths:
+        - artifacts/
+
+sign_addon:
+  stage: build
+  only:
+      - master
+  tags:
+    - python3
+    - npm
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - webext-build --signed
+  artifacts:
+    expire_in: 1 week
+      paths:
+        - artifacts/
+
+release_upload:
+  stage: release
+  only:
+    - master
+  tags:
+    - python3
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - github-release-upload $(webext-version) "$(changelog-reader)"
+    - gitlab-release-upload $(webext-version) "$(changelog-reader)"

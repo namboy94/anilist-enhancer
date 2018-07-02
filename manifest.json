@@ -1,10 +1,9 @@
 {
-
-  "description": "A firefox extension that adds additional information to an anilist.co page",
-  
+  "version": "0.1.0",
   "manifest_version": 2,
+
   "name": "anilist-enhancer",
-  "version": "1.0",
+  "description": "A firefox extension that adds additional information to an anilist.co page",
   "homepage_url": "https://gitlab.namibsun.net:/namibsun/anilist-enhancer",
 
   "icons": {
@@ -21,5 +20,4 @@
   "permissions": [
     "*://graphql.anilist.co/*"
   ]
-
 }

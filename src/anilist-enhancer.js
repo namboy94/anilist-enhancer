@@ -96,7 +96,7 @@ function displayMalButton(malId) {
     let div = document.createElement("div");
     div.style.textAlign = "center";
     div.style.background = "rgb(var(--color-foreground))";
-    div.style.marginBottom = "15px";
+    // div.style.marginBottom = "15px";
 
     let a = document.createElement("a");
     a.href = malUrl;
