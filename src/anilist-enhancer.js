@@ -85,9 +85,18 @@ function displayMyanimelistData(anilistId, anilistType) {
 }
 
 
+/**
+ * Shows the myanimelist button on the side bar
+ * @param malId {Number} The myanimelist ID
+ */
 function displayMalButton(malId) {
     const malUrl = "https://myanimelist.net/anime/" + malId;
     const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+
+    let div = document.createElement("div");
+    div.style.textAlign = "center";
+    div.style.background = "rgb(var(--color-foreground))";
+    div.style.marginBottom = "15px";
 
     let a = document.createElement("a");
     a.href = malUrl;
@@ -97,10 +106,10 @@ function displayMalButton(malId) {
     img.width = 50;
     img.height = 50;
     img.className = "ranking";
-    img.style.marginBottom = "15px";
 
     a.appendChild(img);
+    div.appendChild(a);
 
     const first = document.getElementsByClassName("rankings")[0];
-    document.getElementsByClassName("sidebar")[0].insertBefore(a, first);
+    document.getElementsByClassName("sidebar")[0].insertBefore(div, first);
 }
