@@ -13,8 +13,7 @@
   "content_scripts": [
     {
       "matches": ["*://anilist.co/anime/*", "*://anilist.co/manga/*"],
-      "js": ["src/anilist-enhancer.js"],
-      "run_at": "document_idle"
+      "js": ["src/anilist-enhancer.js"]
     }
   ],
 
