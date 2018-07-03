@@ -17,23 +17,56 @@ You should have received a copy of the GNU General Public License
 along with anilist-enhancer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-prepare();
-const anilistId = getAnilistId();
-displayMyanimelistData(anilistId, getAnilistType());
-displayId(anilistId, "Anilist");
+/**
+ * Runs the main script every 100ms until stopped
+ * @type {number} The interval number
+ */
+setInterval(main, 500);
+let url = window.location.href;
+
+/**
+ * The main function of this script
+ */
+function main() {
+
+    if (document.getElementsByClassName("data").length === 0) {
+        // Continue
+    }
+    else if (document.getElementById("anilist-enhancer-table") === null) {
+        loadData();
+    }
+    else if (url !== window.location.href) {
+        url = window.location.href;
+        document.getElementsByClassName("sidebar")[0].removeChild(
+            document.getElementById("anilist-enhancer-table")
+        );
+        loadData();
+    }
+}
+
+/**
+ * Loads the data into the sidebar
+ */
+function loadData() {
+    prepare();
+    const anilistId = getAnilistId();
+    displayButton(anilistId, "", "/img/icons/icon.svg");
+    displayMyanimelistData(anilistId, getAnilistType());
+}
 
 /**
  * Prepares divs for the new data
  */
 function prepare() {
-    let buttonDiv = document.createElement("div");
-    buttonDiv.id = "anilist-enhancer-buttons";
-    buttonDiv.style.textAlign = "center";
-    buttonDiv.style.marginBottom = "15px";
 
-    const beforeButtons = document.getElementsByClassName("rankings")[0];
-    document.getElementsByClassName("sidebar")[0].insertBefore(buttonDiv, beforeButtons);
+    let buttonTable = document.createElement("table");
+    buttonTable.id = "anilist-enhancer-table";
+    buttonTable.style.textAlign = "center";
+    buttonTable.style.width = "100%";
+    buttonTable.style.marginBottom = "15px";
 
+    const beforeButtons = document.getElementsByClassName("sidebar")[0].children[0];
+    document.getElementsByClassName("sidebar")[0].insertBefore(buttonTable, beforeButtons);
 }
 
 /**
@@ -62,7 +95,7 @@ function getAnilistType() {
 function displayMyanimelistData(anilistId, anilistType) {
 
     const url = 'https://graphql.anilist.co';
-    const query = `
+    let query = `
     query ($id: Int) {
       Media (id: $id, type: ANIME) {
         idMal
@@ -70,6 +103,11 @@ function displayMyanimelistData(anilistId, anilistType) {
     }
     `;
     const variables = {id: anilistId};
+
+    if (anilistType === "manga") {
+        query = query.replace("ANIME", "MANGA")
+    }
+
     const options = {
         method: 'POST',
         headers: {
@@ -92,10 +130,9 @@ function displayMyanimelistData(anilistId, anilistType) {
             if (data["data"] !== null) {
                 const malId = data["data"]["Media"]["idMal"];
                 if (malId !== null) {
-                    const malUrl = "https://myanimelist.net/anime/" + malId;
+                    const malUrl = "https://myanimelist.net/" + anilistType + "/" + malId;
                     const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
-                    displayButton(malUrl, malImg);
-                    displayId(malId, "MAL")
+                    displayButton(malId, malUrl, malImg);
                 }
             }
         })
@@ -107,46 +144,32 @@ function displayMyanimelistData(anilistId, anilistType) {
 
 /**
  * Shows the a button on the side bar
+ * @param id {Number} The ID to display
  * @param url {String} The URL to which to link to
  * @param imgUrl {String} The URL linking to the image for the button
  */
-function displayButton(url, imgUrl) {
+function displayButton(id, url, imgUrl) {
 
-    let a = document.createElement("a");
-    a.href = url;
+    let entry = document.createElement("tr");
+    let imageCol = document.createElement("td");
+    let idCol = document.createElement("td");
 
-    let img = document.createElement('img');
-    img.src = imgUrl;
-    img.width = 50;
-    img.height = 50;
-    img.className = "ranking";
+    let buttonLink = document.createElement("a");
+    buttonLink.href = url;
 
-    a.appendChild(img);
-    document.getElementById("anilist-enhancer-buttons").appendChild(a);
-}
+    let buttonImg = document.createElement('img');
+    buttonImg.src = imgUrl;
+    buttonImg.width = 50;
+    buttonImg.height = 50;
+    buttonImg.style.background = "black";
 
-/**
- * Displays an ID in the sidebar
- * @param id {Number} The ID to display
- * @param name {String} The name of the ID to display
- */
-function displayId(id, name) {
+    let idText = document.createTextNode(id.toString());
 
-    let idDiv = document.createElement("div");
-    idDiv.className = "data-set";
+    buttonLink.appendChild(buttonImg);
+    imageCol.appendChild(buttonLink);
+    idCol.appendChild(idText);
+    entry.appendChild(imageCol);
+    entry.appendChild(idCol);
 
-    let title = document.createElement("div");
-    title.className = "type";
-    title.appendChild(document.createTextNode(name + " ID"));
-
-    idDiv.appendChild(title);
-
-    let entry = document.createElement("div");
-    entry.className = "value";
-    entry.appendChild(document.createTextNode(id.toString()));
-
-    idDiv.appendChild(entry);
-
-    const beforeIds = document.getElementsByClassName("data-set")[0];
-    document.getElementsByClassName("data")[0].insertBefore(idDiv, beforeIds);
+    document.getElementById("anilist-enhancer-table").appendChild(entry);
 }
