@@ -17,7 +17,24 @@ You should have received a copy of the GNU General Public License
 along with anilist-enhancer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-displayMyanimelistData(getAnilistId(), getAnilistType());
+prepare();
+const anilistId = getAnilistId();
+displayMyanimelistData(anilistId, getAnilistType());
+displayId(anilistId, "Anilist");
+
+/**
+ * Prepares divs for the new data
+ */
+function prepare() {
+    let buttonDiv = document.createElement("div");
+    buttonDiv.id = "anilist-enhancer-buttons";
+    buttonDiv.style.textAlign = "center";
+    buttonDiv.style.marginBottom = "15px";
+
+    const beforeButtons = document.getElementsByClassName("rankings")[0];
+    document.getElementsByClassName("sidebar")[0].insertBefore(buttonDiv, beforeButtons);
+
+}
 
 /**
  * Retrieves the anilist ID of the page
@@ -75,7 +92,10 @@ function displayMyanimelistData(anilistId, anilistType) {
             if (data["data"] !== null) {
                 const malId = data["data"]["Media"]["idMal"];
                 if (malId !== null) {
-                    displayMalButton(malId)
+                    const malUrl = "https://myanimelist.net/anime/" + malId;
+                    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+                    displayButton(malUrl, malImg);
+                    displayId(malId, "MAL")
                 }
             }
         })
@@ -86,30 +106,47 @@ function displayMyanimelistData(anilistId, anilistType) {
 
 
 /**
- * Shows the myanimelist button on the side bar
- * @param malId {Number} The myanimelist ID
+ * Shows the a button on the side bar
+ * @param url {String} The URL to which to link to
+ * @param imgUrl {String} The URL linking to the image for the button
  */
-function displayMalButton(malId) {
-    const malUrl = "https://myanimelist.net/anime/" + malId;
-    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
-
-    let div = document.createElement("div");
-    div.style.textAlign = "center";
-    div.style.background = "rgb(var(--color-foreground))";
-    // div.style.marginBottom = "15px";
+function displayButton(url, imgUrl) {
 
     let a = document.createElement("a");
-    a.href = malUrl;
+    a.href = url;
 
     let img = document.createElement('img');
-    img.src = malImg;
+    img.src = imgUrl;
     img.width = 50;
     img.height = 50;
     img.className = "ranking";
 
     a.appendChild(img);
-    div.appendChild(a);
+    document.getElementById("anilist-enhancer-buttons").appendChild(a);
+}
 
-    const first = document.getElementsByClassName("rankings")[0];
-    document.getElementsByClassName("sidebar")[0].insertBefore(div, first);
+/**
+ * Displays an ID in the sidebar
+ * @param id {Number} The ID to display
+ * @param name {String} The name of the ID to display
+ */
+function displayId(id, name) {
+
+    let idDiv = document.createElement("div");
+    idDiv.className = "data-set";
+
+    let title = document.createElement("div");
+    title.className = "type";
+    title.appendChild(document.createTextNode(name + " ID"));
+
+    idDiv.appendChild(title);
+
+    let entry = document.createElement("div");
+    entry.className = "value";
+    entry.appendChild(document.createTextNode(id.toString()));
+
+    idDiv.appendChild(entry);
+
+    const beforeIds = document.getElementsByClassName("data-set")[0];
+    document.getElementsByClassName("data")[0].insertBefore(idDiv, beforeIds);
 }
