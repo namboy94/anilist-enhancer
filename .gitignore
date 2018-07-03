@@ -1,6 +1,5 @@
 .idea/
 *.iml
 node_modules/
-.web-extension-id
 package-lock.json
 web-ext-artifacts/
