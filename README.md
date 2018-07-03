@@ -2,7 +2,7 @@
 
 |master|develop|
 |:----:|:-----:|
-|[![build status](https://gitlab.namibsun.net/namibsun/python/anilist-enhancer/badges/master/build.svg)](https://gitlab.namibsun.net/namibsun/python/anilist-enhancer/commits/master)|[![build status](https://gitlab.namibsun.net/namibsun/python/anilist-enhancer/badges/develop/build.svg)](https://gitlab.namibsun.net/namibsun/python/anilist-enhancer/commits/develop)|
+|[![build status](https://gitlab.namibsun.net/namibsun/anilist-enhancer/badges/master/build.svg)](https://gitlab.namibsun.net/namibsun/anilist-enhancer/commits/master)|[![build status](https://gitlab.namibsun.net/namibsun/anilist-enhancer/badges/develop/build.svg)](https://gitlab.namibsun.net/namibsun/anilist-enhancer/commits/develop)|
 
 ![Logo](resources/logo/logo-readme.png)
 
