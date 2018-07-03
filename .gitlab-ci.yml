@@ -2,7 +2,7 @@ stages:
   - stats
   - test
   - build
-  - sign
+  - publish
   - release
 
 gitstats:
@@ -51,6 +51,17 @@ sign_addon:
     expire_in: 1 week
     paths:
       - artifacts/
+
+publish_addon:
+  stage: publish
+  only:
+    - master
+  tags:
+    - python3
+    - npm
+  script:
+    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
+    - webext-build --signed --publish
 
 release_upload:
   stage: release
