@@ -10,6 +10,7 @@ A firefox extension that adds additional information to an anilist.co page.
 
 Currently, the following elements are added to anime and manga pages:
 
+* anilist.co button
 * myanimelist.net button
 
 ## Further Information
