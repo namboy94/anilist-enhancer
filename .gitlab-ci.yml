@@ -34,8 +34,8 @@ build_addon:
     - webext-build
   artifacts:
     expire_in: 1 week
-      paths:
-        - artifacts/
+    paths:
+      - artifacts/
 
 sign_addon:
   stage: build
@@ -49,8 +49,8 @@ sign_addon:
     - webext-build --signed
   artifacts:
     expire_in: 1 week
-      paths:
-        - artifacts/
+    paths:
+      - artifacts/
 
 release_upload:
   stage: release
