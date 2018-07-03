@@ -1,3 +1,5 @@
+V 0.2.1:
+  - Fix script not starting on anilist home page
 V 0.2.0:
   - Various CI fixes
 V 0.1.0:
