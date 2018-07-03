@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "manifest_version": 2,
 
   "name": "anilist-enhancer",
@@ -12,7 +12,7 @@
 
   "content_scripts": [
     {
-      "matches": ["*://anilist.co/anime/*", "*://anilist.co/manga/*"],
+      "matches": ["*://anilist.co/*"],
       "js": ["src/anilist-enhancer.js"]
     }
   ],

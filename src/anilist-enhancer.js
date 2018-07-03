@@ -32,6 +32,11 @@ function main() {
     if (document.getElementsByClassName("data").length === 0) {
         // Continue
     }
+    else if (
+        !window.location.href.includes("anilist.co/anime/") &&
+        !window.location.href.includes("anilist.co/manga/")) {
+        // Continue
+    }
     else if (document.getElementById("anilist-enhancer-table") === null) {
         loadData();
     }
