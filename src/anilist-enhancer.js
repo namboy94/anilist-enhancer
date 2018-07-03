@@ -17,7 +17,57 @@ You should have received a copy of the GNU General Public License
 along with anilist-enhancer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-displayMyanimelistData(getAnilistId(), getAnilistType());
+/**
+ * Runs the main script every 100ms until stopped
+ * @type {number} The interval number
+ */
+setInterval(main, 500);
+let url = window.location.href;
+
+/**
+ * The main function of this script
+ */
+function main() {
+
+    if (document.getElementsByClassName("data").length === 0) {
+        // Continue
+    }
+    else if (document.getElementById("anilist-enhancer-table") === null) {
+        loadData();
+    }
+    else if (url !== window.location.href) {
+        url = window.location.href;
+        document.getElementsByClassName("sidebar")[0].removeChild(
+            document.getElementById("anilist-enhancer-table")
+        );
+        loadData();
+    }
+}
+
+/**
+ * Loads the data into the sidebar
+ */
+function loadData() {
+    prepare();
+    const anilistId = getAnilistId();
+    displayButton(anilistId, "", "/img/icons/icon.svg");
+    displayMyanimelistData(anilistId, getAnilistType());
+}
+
+/**
+ * Prepares divs for the new data
+ */
+function prepare() {
+
+    let buttonTable = document.createElement("table");
+    buttonTable.id = "anilist-enhancer-table";
+    buttonTable.style.textAlign = "center";
+    buttonTable.style.width = "100%";
+    buttonTable.style.marginBottom = "15px";
+
+    const beforeButtons = document.getElementsByClassName("sidebar")[0].children[0];
+    document.getElementsByClassName("sidebar")[0].insertBefore(buttonTable, beforeButtons);
+}
 
 /**
  * Retrieves the anilist ID of the page
@@ -45,7 +95,7 @@ function getAnilistType() {
 function displayMyanimelistData(anilistId, anilistType) {
 
     const url = 'https://graphql.anilist.co';
-    const query = `
+    let query = `
     query ($id: Int) {
       Media (id: $id, type: ANIME) {
         idMal
@@ -53,6 +103,11 @@ function displayMyanimelistData(anilistId, anilistType) {
     }
     `;
     const variables = {id: anilistId};
+
+    if (anilistType === "manga") {
+        query = query.replace("ANIME", "MANGA")
+    }
+
     const options = {
         method: 'POST',
         headers: {
@@ -75,7 +130,9 @@ function displayMyanimelistData(anilistId, anilistType) {
             if (data["data"] !== null) {
                 const malId = data["data"]["Media"]["idMal"];
                 if (malId !== null) {
-                    displayMalButton(malId)
+                    const malUrl = "https://myanimelist.net/" + anilistType + "/" + malId;
+                    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+                    displayButton(malId, malUrl, malImg);
                 }
             }
         })
@@ -86,30 +143,33 @@ function displayMyanimelistData(anilistId, anilistType) {
 
 
 /**
- * Shows the myanimelist button on the side bar
- * @param malId {Number} The myanimelist ID
+ * Shows the a button on the side bar
+ * @param id {Number} The ID to display
+ * @param url {String} The URL to which to link to
+ * @param imgUrl {String} The URL linking to the image for the button
  */
-function displayMalButton(malId) {
-    const malUrl = "https://myanimelist.net/anime/" + malId;
-    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+function displayButton(id, url, imgUrl) {
 
-    let div = document.createElement("div");
-    div.style.textAlign = "center";
-    div.style.background = "rgb(var(--color-foreground))";
-    div.style.marginBottom = "15px";
+    let entry = document.createElement("tr");
+    let imageCol = document.createElement("td");
+    let idCol = document.createElement("td");
 
-    let a = document.createElement("a");
-    a.href = malUrl;
+    let buttonLink = document.createElement("a");
+    buttonLink.href = url;
 
-    let img = document.createElement('img');
-    img.src = malImg;
-    img.width = 50;
-    img.height = 50;
-    img.className = "ranking";
+    let buttonImg = document.createElement('img');
+    buttonImg.src = imgUrl;
+    buttonImg.width = 50;
+    buttonImg.height = 50;
+    buttonImg.style.background = "black";
 
-    a.appendChild(img);
-    div.appendChild(a);
+    let idText = document.createTextNode(id.toString());
 
-    const first = document.getElementsByClassName("rankings")[0];
-    document.getElementsByClassName("sidebar")[0].insertBefore(div, first);
+    buttonLink.appendChild(buttonImg);
+    imageCol.appendChild(buttonLink);
+    idCol.appendChild(idText);
+    entry.appendChild(imageCol);
+    entry.appendChild(idCol);
+
+    document.getElementById("anilist-enhancer-table").appendChild(entry);
 }
