@@ -55,8 +55,10 @@ function main() {
 function loadData() {
     prepare();
     const anilistId = getAnilistId();
+    const anilistType = getAnilistType();
     displayButton(anilistId, "", "/img/icons/icon.svg");
-    displayMyanimelistData(anilistId, getAnilistType());
+    displayMyanimelistData(anilistId, anilistType);
+    displayOtakuInfoIds(anilistId, anilistType);
 }
 
 /**
@@ -90,6 +92,49 @@ function getAnilistId() {
 function getAnilistType() {
     const url = window.location.href;
     return url.split("https://anilist.co/")[1].split("/")[0]
+}
+
+function displayOtakuInfoIds(anilistId, anilistType) {
+	var url = 'https://dev.otaku-info.eu/api/v1/media_ids/anilist/' + anilistType + '/' + anilistId;
+
+	console.log("AAA")
+
+    fetch(url)
+    	.then(function handleResponse(response) {
+            return response.json().then(function (json) {
+                return response.ok ? json : Promise.reject(json);
+            });
+        })
+        .then(function handleData(data) {
+        	for (service in data["data"]) {
+        		id = data["data"][service]
+        		console.log(service);
+        		if (service === "otaku_info") {
+        			displayButton(
+        				id, 
+        				"https://dev.otaku-info.eu/media/" + id, 
+        				"https://dev.otaku-info.eu/static/logo.png"
+        			);
+        		}
+        		if (service === "mangadex") {
+        			displayButton(
+        				id, 
+        				"https://mangadex.org/title/" + id, 
+        				"https://mangadex.org/images/misc/navbar.svg"
+        			);
+        		}
+        		if (service === "mangaupdates") {
+        			displayButton(
+        				id, 
+        				"https://www.mangaupdates.com/series.html?id=" + id, 
+        				"https://i.imgur.com/EX348cq.jpg"
+        			);
+        		}
+        	}        	
+        })
+        .catch(function handleError(error) {
+            console.error(error);
+        });
 }
 
 /**
@@ -136,7 +181,7 @@ function displayMyanimelistData(anilistId, anilistType) {
                 const malId = data["data"]["Media"]["idMal"];
                 if (malId !== null) {
                     const malUrl = "https://myanimelist.net/" + anilistType + "/" + malId;
-                    const malImg = "https://pbs.twimg.com/profile_images/926302376738377729/SMlpasPv.jpg";
+                    const malImg = "https://cdn.myanimelist.net/img/sp/icon/apple-touch-icon-256.png";
                     displayButton(malId, malUrl, malImg);
                 }
             }
