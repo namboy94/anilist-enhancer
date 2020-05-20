@@ -1,36 +1,44 @@
 stages:
+  - mirror
   - stats
   - test
   - build
-  - publish
   - release
+
+default:
+  image: namboy94/ci-docker-environment:0.8.0
+  before_script:
+    - echo "$SERVER_ACCESS_KEY" > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa
+    - apt install npm -y
+
+github_mirror:
+  stage: mirror
+  tags: [docker]
+  only: [master, develop]
+  before_script:
+    - echo "$GITHUB_SSH_KEY" > ~/.ssh/id_rsa
+    - chmod 0600 ~/.ssh/id_rsa
+  script:
+    - git-mirror-pusher git@github.com:namboy94/anilist-enhancer.git
+      master develop
 
 gitstats:
   stage: stats
-  tags:
-    - python3
-    - gitstats
-    - progstats
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - gitstats-gen
 
-lint:
+stylecheck:
   stage: test
-  tags:
-    - python3
-    - npm
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - webext-lint
 
 build_addon:
   stage: build
-  tags:
-    - python3
-    - npm
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - webext-build
   artifacts:
     expire_in: 1 week
@@ -39,13 +47,9 @@ build_addon:
 
 sign_addon:
   stage: build
-  only:
-      - master
-  tags:
-    - python3
-    - npm
+  only: [master]
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - webext-build --signed
   artifacts:
     expire_in: 1 week
@@ -53,23 +57,16 @@ sign_addon:
       - artifacts/
 
 publish_addon:
-  stage: publish
-  only:
-    - master
-  tags:
-    - python3
-    - npm
+  stage: release
+  only: [master]
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - webext-build --signed --publish
 
 release_upload:
   stage: release
-  only:
-    - master
-  tags:
-    - python3
+  only: [master]
+  tags: [docker]
   script:
-    - python3 -m venv virtual && source virtual/bin/activate && pip install ci-scripts
     - github-release-upload $(webext-version) "$(changelog-reader)"
     - gitlab-release-upload $(webext-version) "$(changelog-reader)"
