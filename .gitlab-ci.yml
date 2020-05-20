@@ -57,7 +57,7 @@ sign_addon:
       - artifacts/
 
 publish_addon:
-  stage: publish
+  stage: release
   only: [master]
   tags: [docker]
   script:
