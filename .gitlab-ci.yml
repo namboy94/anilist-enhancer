@@ -11,6 +11,7 @@ default:
     - echo "$SERVER_ACCESS_KEY" > ~/.ssh/id_rsa
     - chmod 0600 ~/.ssh/id_rsa
     - apt install npm -y
+    - npm install web-ext@4.2.0  # TODO Fix this
 
 github_mirror:
   stage: mirror
@@ -33,13 +34,15 @@ stylecheck:
   stage: test
   tags: [docker]
   script:
-    - webext-lint
+    - node_modules/.bin/web-ext lint -i virtual
+    #- webext-lint TODO Fix this
 
 build_addon:
   stage: build
   tags: [docker]
   script:
-    - webext-build
+    - node_modules/.bin/web-ext build -i virtual
+    #- webext-build TODO Fix this
   artifacts:
     expire_in: 1 week
     paths:
@@ -50,7 +53,8 @@ sign_addon:
   only: [master]
   tags: [docker]
   script:
-    - webext-build --signed
+    - node_modules/.bin/web-ext sign --api-key "$JWT_ISSUER" --api-secret "$JWT_SECRET" -i virtual
+    # - webext-build --signed TODO Fix this
   artifacts:
     expire_in: 1 week
     paths:
@@ -61,7 +65,8 @@ publish_addon:
   only: [master]
   tags: [docker]
   script:
-    - webext-build --signed --publish
+    - node_modules/.bin/web-ext sign --api-key "$JWT_ISSUER" --api-secret "$JWT_SECRET" -i virtual --id "$AMO_ID"
+    # - webext-build --signed --publish TODO Fix this
 
 release_upload:
   stage: release
