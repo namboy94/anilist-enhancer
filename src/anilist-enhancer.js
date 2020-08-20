@@ -95,9 +95,7 @@ function getAnilistType() {
 }
 
 function displayOtakuInfoIds(anilistId, anilistType) {
-	var url = 'https://dev.otaku-info.eu/api/v1/media_ids/anilist/' + anilistType + '/' + anilistId;
-
-	console.log("AAA")
+	var url = 'https://otaku-info.eu/api/v1/media_ids/anilist/' + anilistType + '/' + anilistId;
 
     fetch(url)
     	.then(function handleResponse(response) {
@@ -112,8 +110,8 @@ function displayOtakuInfoIds(anilistId, anilistType) {
         		if (service === "otaku_info") {
         			displayButton(
         				id, 
-        				"https://dev.otaku-info.eu/media/" + id, 
-        				"https://dev.otaku-info.eu/static/logo.png"
+        				"https://otaku-info.eu/media/" + id,
+        				"https://otaku-info.eu/static/logo.png"
         			);
         		}
         		if (service === "mangadex") {

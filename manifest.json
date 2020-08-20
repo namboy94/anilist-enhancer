@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.3.1",
   "manifest_version": 2,
 
   "name": "anilist-enhancer",
@@ -19,6 +19,6 @@
 
   "permissions": [
     "*://graphql.anilist.co/*",
-    "*://dev.otaku-info.eu/api/*"
+    "*://otaku-info.eu/api/*"
   ]
 }
